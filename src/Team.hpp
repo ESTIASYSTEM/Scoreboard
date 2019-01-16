@@ -3,6 +3,9 @@
 // Scoreboard.hpp
 //
 
+#ifndef TEAM_HPP
+#define TEAM_HPP
+
 #include <memory>
 #include <string>
 
@@ -23,15 +26,17 @@ public:
 
     // Methods
     void    incrementScore(const unsigned long& increment = 1);
-    void    decrement(const unsigned long& decrement = 1);
+    void    decrementScore(const unsigned long& decrement = 1);
 
     void    resetScore();
 
     // Getters
-    unsigned long   getScore() const;
     std::string     getName() const;
+    unsigned long   getScore() const;
+
 
     // Setters
+    void    setName(const std::string& name);
     void    setScore(const unsigned long& score);
 
 private:
@@ -40,3 +45,5 @@ private:
     unsigned long   mScore;
 
 };
+
+#endif //TEAM_HPP

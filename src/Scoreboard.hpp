@@ -3,6 +3,11 @@
 // Scoreboard
 //
 
+#ifndef SCOREBOARD_HPP
+#define SCOREBOARD_HPP
+
+#include <algorithm>
+#include <functional>
 #include <memory>
 #include <vector>
 
@@ -10,16 +15,37 @@
 
 #include "Team.hpp"
 
-class Scoreboard : sf::Drawable
+
+
+class Scoreboard //: public sf::Drawable
 {
 public:
 
-    Scoreboard();
+    static const int MAX_TEAM = 4;
+    static const int SCORE_SIZE_THRESHOLD = 300;
 
+public:
+
+    Scoreboard();
+    ~Scoreboard();
+
+    // Methods
+
+    bool incrementTeamScore(const std::string& teamName, const unsigned long& increment);
+    bool decrementTeamScore(const std::string& teamName, const unsigned long& decrement);
+
+    bool addTeam(Team::Ptr team);
+    bool deleteTeam(const std::string& teamName);
+
+protected:
+
+    // Internal Handling
+    std::vector<Team::Ptr>::iterator findTeam(const std::string& teamName);
 
 private:
 
-    virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
+
+    //virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
 private:
 
@@ -27,3 +53,5 @@ private:
 
 
 };
+
+#endif //SCOREBOARD_HPP
