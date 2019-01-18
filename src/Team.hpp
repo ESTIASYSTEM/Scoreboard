@@ -7,6 +7,7 @@
 #define TEAM_HPP
 
 #include <memory>
+#include <limits>
 #include <string>
 
 #include <SFML/Graphics.hpp>

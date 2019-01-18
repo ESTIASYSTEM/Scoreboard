@@ -25,12 +25,12 @@ Team::Team(const std::string& name, const unsigned long& score)
 
 void Team::incrementScore(const unsigned long& increment)
 {
-    setScore(getScore() + increment);
+    setScore(std::min<unsigned long>(getScore() + increment, std::numeric_limits<unsigned long>::max()));
 }
 
 void Team::decrementScore(const unsigned long& decrement)
 {
-    setScore(getScore() - decrement);
+    setScore(std::max<long long>(0 ,static_cast<long long>(getScore() - decrement)));
 }
 
 void Team::resetScore()
