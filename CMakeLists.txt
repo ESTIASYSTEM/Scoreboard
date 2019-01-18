@@ -26,7 +26,11 @@ add_executable(
     src/Main.cpp
     src/Team.hpp
     src/Team.cpp
-    
+    src/Scoreboard.hpp
+    src/Scoreboard.cpp
+    src/ResourceHolder.hpp
+    src/ResourceHolder.inl
+
 
 )
 
