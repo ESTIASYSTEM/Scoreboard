@@ -75,15 +75,31 @@ bool Scoreboard::deleteTeam(const std::string& teamName)
     return deleted;
 }
 
-
-////////// Getters
-
-
-
-////////// Setters
-
+void Scoreboard::update()
+{
+    auto bestScore = findBestScore();
+    for(auto& team : teamArray)
+    {
+        auto t = team.get();
+        t->setScoreBarRatio(t->getScore()/static_cast<float>(bestScore));
+    }
+}
 
 ////////// Internal Handling
+
+unsigned long Scoreboard::findBestScore() const
+{
+    unsigned long bestScore(0);
+    unsigned long buff;
+
+    for(auto& team : teamArray)
+    {
+        buff = team.get()->getScore();
+        bestScore = (buff > bestScore)? buff : bestScore;
+    }
+
+    return bestScore;
+}
 
 std::vector<Team::Ptr>::iterator Scoreboard::findTeam(const std::string& teamName)
 {
@@ -94,3 +110,15 @@ std::vector<Team::Ptr>::iterator Scoreboard::findTeam(const std::string& teamNam
 
     return found;
 }
+
+////////// Draw
+
+void Scoreboard::draw(sf::RenderTarget& target, sf::RenderStates states) const
+{
+    for(auto& team : teamArray)
+    {
+        target.draw(*team.get(), states);
+    }
+}
+
+//

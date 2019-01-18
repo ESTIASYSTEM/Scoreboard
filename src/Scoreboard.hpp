@@ -17,7 +17,7 @@
 
 
 
-class Scoreboard //: public sf::Drawable
+class Scoreboard : public sf::Drawable
 {
 public:
 
@@ -30,27 +30,28 @@ public:
     ~Scoreboard();
 
     // Methods
+    bool    incrementTeamScore(const std::string& teamName, const unsigned long& increment);
+    bool    decrementTeamScore(const std::string& teamName, const unsigned long& decrement);
 
-    bool incrementTeamScore(const std::string& teamName, const unsigned long& increment);
-    bool decrementTeamScore(const std::string& teamName, const unsigned long& decrement);
+    bool    addTeam(Team::Ptr team);
+    bool    deleteTeam(const std::string& teamName);
 
-    bool addTeam(Team::Ptr team);
-    bool deleteTeam(const std::string& teamName);
+    void    update();
 
 protected:
 
     // Internal Handling
+    unsigned long                    findBestScore() const;
     std::vector<Team::Ptr>::iterator findTeam(const std::string& teamName);
+
 
 private:
 
-
-    //virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
+    virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
 private:
 
     std::vector<Team::Ptr> teamArray;
-
 
 };
 
