@@ -80,7 +80,7 @@ int main(int argc, char** argv)
 
     auto slytherinTeam = std::make_shared<Team>();
     slytherinTeam->setName("slytherin");
-    slytherinTeam->setPosition(2560*2/5.f,1300);
+    slytherinTeam->setPosition(2560*4/5.f,1300);
     slytherinTeam->setScoreCharacterSize(char_size);
     slytherinTeam->setScoreColor(sf::Color(51,51,51));
     slytherinTeam->setScoreBarColor(sf::Color(144,214,195));
@@ -101,7 +101,7 @@ int main(int argc, char** argv)
 
     auto hufflepuffTeam = std::make_shared<Team>();
     hufflepuffTeam->setName("hufflepuff");
-    hufflepuffTeam->setPosition(2560*4/5.f,1300);
+    hufflepuffTeam->setPosition(2560*2/5.f,1300);
     hufflepuffTeam->setScoreCharacterSize(char_size);
     hufflepuffTeam->setScoreColor(sf::Color(51,51,51));
     hufflepuffTeam->setScoreBarColor(sf::Color(246,242,201));
@@ -117,6 +117,8 @@ int main(int argc, char** argv)
     // Creating the window
     sf::RenderWindow paramW(sf::VideoMode(800, 600), "parameters", sf::Style::Close);
     sf::RenderWindow window(sf::VideoMode(2560, 1600), "Scoreboard", sf::Style::None);
+    paramW.setFramerateLimit(60);
+    window.setFramerateLimit(60);
 
     // For new parameters
     sf::Text command_display;
@@ -127,7 +129,7 @@ int main(int argc, char** argv)
     std::string command_team_name("");
     long command_team_points(-1);
 
-
+    bool lockedWindow(true);
 
     // Run the program as long as the window is open
     while (paramW.isOpen())
@@ -137,6 +139,11 @@ int main(int argc, char** argv)
         sf::Event event;
         while (window.pollEvent(event))
         {
+            if (event.type == sf::Event::Closed)
+            {
+                paramW.close();
+                window.close();
+            }
 
             if (event.type == sf::Event::KeyPressed &&
                 event.key.code == sf::Keyboard::Left)
@@ -170,35 +177,56 @@ int main(int argc, char** argv)
             if (event.type == sf::Event::Closed)
             {
                 paramW.close();
+                window.close();
             }
 
             if (event.type == sf::Event::KeyPressed &&
-                event.key.code == sf::Keyboard::Up)
+                event.key.code == sf::Keyboard::Up && !lockedWindow)
             {
                 auto pos = window.getPosition();
-                window.setPosition(sf::Vector2i(pos.x,pos.y-5));
+                if(!event.key.alt)
+                    window.setPosition(sf::Vector2i(pos.x,pos.y-1));
+                else
+                    window.setPosition(sf::Vector2i(pos.x,pos.y-50));
             }
 
             if (event.type == sf::Event::KeyPressed &&
-                event.key.code == sf::Keyboard::Down)
+                event.key.code == sf::Keyboard::Down && !lockedWindow)
             {
                 auto pos = window.getPosition();
-                window.setPosition(sf::Vector2i(pos.x,pos.y+5));
+                if(!event.key.alt)
+                    window.setPosition(sf::Vector2i(pos.x,pos.y+1));
+                else
+                    window.setPosition(sf::Vector2i(pos.x,pos.y+50));
             }
 
             if (event.type == sf::Event::KeyPressed &&
-                event.key.code == sf::Keyboard::Left)
+                event.key.code == sf::Keyboard::Left && !lockedWindow)
             {
                 auto pos = window.getPosition();
-                window.setPosition(sf::Vector2i(pos.x-5,pos.y));
+                if(!event.key.alt)
+                    window.setPosition(sf::Vector2i(pos.x-1,pos.y));
+                else
+                    window.setPosition(sf::Vector2i(pos.x-50,pos.y));
             }
 
             if (event.type == sf::Event::KeyPressed &&
-                event.key.code == sf::Keyboard::Right)
+                event.key.code == sf::Keyboard::Right && !lockedWindow)
             {
                 auto pos = window.getPosition();
-                window.setPosition(sf::Vector2i(pos.x+5,pos.y));
+                if(!event.key.alt)
+                    window.setPosition(sf::Vector2i(pos.x+1,pos.y));
+                else
+                    window.setPosition(sf::Vector2i(pos.x+50,pos.y));
             }
+
+            if (event.type == sf::Event::KeyPressed &&
+                event.key.code == sf::Keyboard::Tab)
+            {
+                lockedWindow = (lockedWindow)? false : true;
+            }
+
+
 
 
             if (event.type == sf::Event::TextEntered)
@@ -211,51 +239,69 @@ int main(int argc, char** argv)
 
                     // lowering
                     std::transform(command.begin(), command.end(), command.begin(), ::tolower);
-                    std::cout << command << std::endl;
-                    if (command.find("gryf") != std::string::npos)
+                    //std::cout << command << std::endl;
+                    if(command == "g")
                     {
-                        command_team_name = "gryffindor";
+                        scoreboard.incrementTeamScore("gryffindor", 1);
                     }
-                    else if (command.find("slyt") != std::string::npos)
+                    else if(command == "s")
                     {
-                        command_team_name = "slytherin";
+                        scoreboard.incrementTeamScore("slytherin", 1);
                     }
-                    else if (command.find("rave") != std::string::npos)
+                    else if(command == "r")
                     {
-                        command_team_name = "ravenclaw";
+                        scoreboard.incrementTeamScore("ravenclaw", 1);
                     }
-                    else if (command.find("huff") != std::string::npos)
+                    else if(command == "h")
                     {
-                        command_team_name = "hufflepuff";
+                        scoreboard.incrementTeamScore("hufflepuff", 1);
                     }
-
-                    //we found a good team name, then we can look for points
-                    if(command_team_name.size() != 0)
+                    else
                     {
-                        std::size_t const n = command.find_first_of("0123456789");
-                        if (n != std::string::npos)
+                        if (command.find("gryf") != std::string::npos)
                         {
-                            std::size_t const m = command.find_first_not_of("0123456789", n);
-                            auto number = command.substr(n, m != std::string::npos ? m-n : m);
-                            if(!number.empty() && std::all_of(number.begin(), number.end(), ::isdigit))
+                            command_team_name = "gryffindor";
+                        }
+                        else if (command.find("slyt") != std::string::npos)
+                        {
+                            command_team_name = "slytherin";
+                        }
+                        else if (command.find("rave") != std::string::npos)
+                        {
+                            command_team_name = "ravenclaw";
+                        }
+                        else if (command.find("huff") != std::string::npos)
+                        {
+                            command_team_name = "hufflepuff";
+                        }
+
+                        //we found a good team name, then we can look for points
+                        if(command_team_name.size() != 0)
+                        {
+                            std::size_t const n = command.find_first_of("0123456789");
+                            if (n != std::string::npos)
                             {
-                                command_team_points = std::stoi(number);
+                                std::size_t const m = command.find_first_not_of("0123456789", n);
+                                auto number = command.substr(n, m != std::string::npos ? m-n : m);
+                                if(!number.empty() && std::all_of(number.begin(), number.end(), ::isdigit))
+                                {
+                                    command_team_points = std::stoi(number);
+                                }
+                            }
+                        }
+
+                        if(command_team_points >= 0)
+                        {
+                            if (command.find("-") != std::string::npos)
+                            {
+                                scoreboard.decrementTeamScore(command_team_name, command_team_points);
+                            }
+                            else
+                            {
+                                scoreboard.incrementTeamScore(command_team_name, command_team_points);
                             }
                         }
                     }
-
-                    if(command_team_points >= 0)
-                    {
-                        if (command.find("-") != std::string::npos)
-                        {
-                            scoreboard.decrementTeamScore(command_team_name, command_team_points);
-                        }
-                        else
-                        {
-                            scoreboard.incrementTeamScore(command_team_name, command_team_points);
-                        }
-                    }
-
                     command.clear();
                     command_team_name.clear();
                     command_team_points = -1;
